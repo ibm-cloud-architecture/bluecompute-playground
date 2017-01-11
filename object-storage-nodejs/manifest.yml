@@ -1,0 +1,11 @@
+applications:
+- services:
+  - gchen-object-storage
+  disk_quota: 1024M
+  host: gchen-objectstore-node
+  name: gchen-objectstore-node
+  command: node app.js
+  path: .
+  domain: mybluemix.net
+  instances: 1
+  memory: 256M
