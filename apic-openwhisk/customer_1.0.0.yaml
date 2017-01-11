@@ -1,0 +1,103 @@
+---
+swagger: "2.0"
+info:
+  x-ibm-name: "customer"
+  title: "Customer API"
+  version: "1.0.0"
+schemes:
+- "https"
+host: "$(catalog.host)"
+basePath: "/customer"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+securityDefinitions:
+  clientIdHeader:
+    type: "apiKey"
+    in: "header"
+    name: "X-IBM-Client-Id"
+security:
+- clientIdHeader: []
+x-ibm-configuration:
+  testable: true
+  enforced: true
+  cors:
+    enabled: true
+  catalogs:
+    apic-dev:
+      properties:
+        runtime-url: "$(TARGET_URL)"
+    sb:
+      properties:
+        runtime-url: "http://localhost:4001"
+  assembly:
+    execute:
+    - set-variable:
+        title: "set-variable"
+        actions:
+        - value: ""
+          add: "real_path"
+    - gatewayscript:
+        title: "gatewayscript"
+        source: "var old_path = apim.getvariable('request.path');\nvar id = apim.getvariable('request.parameters.id');\n\
+          \nvar real_path = old_path;\nif (id != null) {\n    var index = old_path.lastIndexOf('/');\n\
+          \    real_path = old_path.substring(0,index);\n    \n    real_path = real_path\
+          \ + \"?id=\" + id;\n}\n\napim.setvariable('real_path', real_path, 'set');"
+    - invoke:
+        target-url: "https://d7af58f0-6cdc-4a52-b436-f98991dc09c9-gws.api-gw.mybluemix.net$(real_path)"
+        title: "get profile"
+        verb: "keep"
+        cache-response: "no-cache"
+  gateway: "datapower-gateway"
+  phase: "realized"
+paths:
+  /profile/{id}:
+    get:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "id"
+        type: "string"
+        required: true
+        in: "path"
+    delete:
+      responses:
+        200:
+          description: "200 OK"
+      parameters:
+      - name: "id"
+        type: "string"
+        required: true
+        in: "path"
+  /profile:
+    get:
+      summary: "User list"
+      description: "Get a list of users"
+      operationId: "userList"
+      externalDocs:
+        description: "Blah"
+        url: "http://host/docs-about-routes-post"
+      tags:
+      - "Users"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "object"
+        default:
+          description: "Unexpected error"
+          schema:
+            type: "object"
+tags:
+- name: "Users"
+  description: "Tags on all the user operations"
+  externalDocs:
+    description: "External information about Users"
+    url: "http://host/url-of-my-entire-set-of-tag-docs-for-this-tag"
+- name: "Routes"
+  description: "Tags on all the route operations"
+  externalDocs:
+    description: "External information about Routes"
+    url: "http://host/url-of-my-entire-set-of-tag-docs-for-this-tag"
