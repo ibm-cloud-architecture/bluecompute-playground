@@ -1,0 +1,8 @@
+{
+  "name": "pingElasticSearch",
+  "version": "1.0.0",
+  "main": "pingElasticSearch.js",
+  "dependencies" : {
+    "elasticsearch" : "x.x.x"
+  }
+}
